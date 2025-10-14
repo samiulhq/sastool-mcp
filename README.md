@@ -50,7 +50,8 @@ sequenceDiagram
     participant VC as SAS Viya Compute
     participant CAS as CAS / CASLIBs
 
-    U->>C: Run SAS code request
+    U->>C: Analysis request from user
+    C->>C: Generate SAS Code:code
     C->>M: MCP tool call: runsascode(code)
     M->>P: sas.submit(code, results='HTML')
     P->>VC: Start compute session
@@ -61,5 +62,6 @@ sequenceDiagram
     VC-->>P: Return LOG and ODS results
     P-->>M: {"LOG": "...", "LST": "<html>...</html>"}
     M-->>C: Return MCP JSON
+    C->>C: Evaluate and generate additional SAS code if needed
     C-->>U: Display results (HTML tables/graphs)
 ```
