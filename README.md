@@ -35,3 +35,4 @@ Edit your claude_desktop_config.json (macOS: ~/Library/Application Support/Claud
   }
 }
 ```
+![Example flow with Claude](Example%20FLow%20with%20Claude%20Desktop.png)
