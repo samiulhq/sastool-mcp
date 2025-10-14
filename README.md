@@ -18,6 +18,9 @@ It’s built with `FastMCP` and `saspy`.
 SASPy requires a configuration that specifies how it connects to SAS. To configure SASPy follow the instructions [here](https://sassoftware.github.io/saspy/configuration.html).
 
 ## ⚙️ Use with Claude Desktop
+[![Watch the video](https://lh3.googleusercontent.com/d/1WAwX4zkm_tZLN-MwNthcq3kJ57g72uPb=w600-h600)](https://drive.google.com/file/d/1WAwX4zkm_tZLN-MwNthcq3kJ57g72uPb/view?usp=drive_link)
+
+
 
 Edit your claude_desktop_config.json (macOS: ~/Library/Application Support/Claude/claude_desktop_config.json):
 ```json
