@@ -35,4 +35,28 @@ Edit your claude_desktop_config.json (macOS: ~/Library/Application Support/Claud
   }
 }
 ```
-![Example flow with Claude](Example%20FLow%20with%20Claude%20Desktop.png)
+### Example flow with Claude
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant C as Claude Desktop<br/>(Sonnet 4.5)
+    participant M as MCP Server<br/>(server.py / FastMCP)
+    participant P as SASPy
+    participant VC as SAS Viya Compute
+    participant CAS as CAS / CASLIBs
+
+    U->>C: Run SAS code request
+    C->>M: MCP tool call: runsascode(code)
+    M->>P: sas.submit(code, results='HTML')
+    P->>VC: Start compute session
+    VC->CAS: CAS Initiate
+
+    CAS-->>VC: Data access / processing
+
+    VC-->>P: Return LOG and ODS results
+    P-->>M: {"LOG": "...", "LST": "<html>...</html>"}
+    M-->>C: Return MCP JSON
+    C-->>U: Display results (HTML tables/graphs)
+```
