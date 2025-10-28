@@ -1,11 +1,14 @@
 # sastool — A Tiny MCP Server for Running SAS Code via SASPy
 
-This repository contains a minimal **Model Context Protocol (MCP)** server that exposes two SAS-powered tools to an MCP-compatible client (e.g., Claude Desktop):
+This repository contains a minimal **Model Context Protocol (MCP)** server that exposes following SAS-powered tools to an MCP-compatible client (e.g., Claude Desktop, GitHub CoPilot):
 
-- `listlibraries` — lists assigned SAS libraries (including CAS libs)
-- `runsascode` — executes SAS code and returns SAS log and listing output
-
-It’s built with `FastMCP` and `saspy`.
+| Tool Name | Description |
+|------------|-------------|
+| `run_sas(code)` | Runs SAS code and returns LOG + HTML results |
+| `list_libs()` | Lists assigned SAS/CAS libraries |
+| `list_tables(libname)` | Lists tables in a SAS library |
+| `list_directory(path)` | Lists files on SAS server | 
+| `save_code(path, filename, content)` | Save SAS code remotely |
 
 ---
 ## ⚙️ Features
