@@ -3,8 +3,30 @@ from mcp.server.fastmcp import FastMCP
 from typing import List
 import io, os, sys, contextlib
 import saspy
+import logging
 from typing import TypedDict
+from datetime import datetime
+
+
+# --- Logging Setup ---
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, f"mcp_server_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE, mode="a"),
+        logging.StreamHandler()
+    ]
+)
+
+logging.info(f"MCP Server started, logging to {LOG_FILE}")
+
+
 # Create an MCP server
+
 mcp = FastMCP("sastool")
 
 @contextlib.contextmanager
@@ -36,11 +58,12 @@ class SASRunResult(TypedDict):
 
 
 
-# Add an addition tool
+# tool definitions
 @mcp.tool()
-def listlibraries() -> List[str]:
-    """List assigned SAS libraries and CAS librarires"""
+def list_libs() -> List[str]:    
+    """List assigned SAS libraries and CAS libraries"""
     # Do *everything* SAS-related inside the silencer, including the import
+    logging.info("list_libs() called")
     try:
         with silence_all_output():
             import saspy
@@ -63,9 +86,11 @@ def listlibraries() -> List[str]:
         else:
             out.append(str(item))
     return out
+
 @mcp.tool()
-def runsascode(code: str) -> SASRunResult:
-    """Run SAS code provided by user"""""
+def run_sas(code: str) -> SASRunResult:    
+    """Run SAS code provided by user"""
+    logging.info(f"run_sas() called with code length {len(code)}. Here is the full sas code:{code}")
     # Do *everything* SAS-related inside the silencer, including the import
     try:
         with silence_all_output():
@@ -79,6 +104,65 @@ def runsascode(code: str) -> SASRunResult:
 
   
     return result
+@mcp.tool()
+def list_tables(libname: str) -> List[str]:
+    """List tables in a given SAS library"""
+    logging.info(f"list_tables() called on library '{libname}'")
+    # Do *everything* SAS-related inside the silencer, including the import
+    try:
+        with silence_all_output():
+            import saspy
+            sas = saspy.SASsession()          # may emit banners
+            sas.submit("cas; caslib _ALL_ assign;")  # may emit logs
+            tables = sas.list_tables(libname)
+            sas.endsas()
+    except Exception as e:
+        # Return a JSON-serializable error; do not print
+        return [f"SAS session error: {type(e).__name__}: {e}"]
+
+    out = [item[0] for item in tables if item[1] == 'DATA']
+    return out
+
+@mcp.tool()
+def list_directory(path: str) -> List[str]:
+    """List contents of a given directory path"""
+    logging.info(f"list_directory() called on path '{path}'")
+    try:
+        with silence_all_output():
+            import saspy
+            sas = saspy.SASsession()          # may emit banners
+            dirlist = sas.dirlist(path)
+            sas.endsas()
+    except Exception as e:
+        # Return a JSON-serializable error; do not print
+        return [f"SAS session error: {type(e).__name__}: {e}"]
+    
+    return dirlist
+
+@mcp.tool()
+def save_code(path: str,filename: str, content: str) -> str:
+    """Save SAS Code to remote SAS server"""
+    logging.info(f"save_code() called: path={path}, filename={filename}")
+    try:
+        with silence_all_output():
+            import saspy            
+            current_working_directory = os.getcwd()
+            try:
+                with open(file_path,"w") as f:
+                    f.write(content)
+
+            except IOError as e:
+                return f"Error creating temporary file for saving sas code : {e}"   
+            file_path = os.path.join(current_working_directory, filename)
+            sas = saspy.SASsession()          # may emit banners
+            with sas.upload():
+                pass
+            sas.endsas()
+    except Exception as e:
+        # Return a JSON-serializable error; do not print
+        return f"SAS session error: {type(e).__name__}: {e}"
+    
+    return f"Code saved to {path}"
 
 
 # Add a dynamic greeting resource
@@ -92,3 +176,4 @@ if __name__ == "__main__":
     # This actually starts the MCP server over stdio for Claude Desktop
     # mcp.run(transport="streamable-http")
     mcp.run()
+    
