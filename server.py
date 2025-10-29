@@ -147,16 +147,18 @@ def save_code(path: str,filename: str, content: str) -> str:
         with silence_all_output():
             import saspy            
             current_working_directory = os.getcwd()
+            file_path = os.path.join(current_working_directory, filename)
+            remote_path=os.path.join(path,filename)
+            remote_path=os.path.join(path,filename).replace("\\","/") 
             try:
                 with open(file_path,"w") as f:
                     f.write(content)
 
             except IOError as e:
                 return f"Error creating temporary file for saving sas code : {e}"   
-            file_path = os.path.join(current_working_directory, filename)
+            
             sas = saspy.SASsession()          # may emit banners
-            with sas.upload():
-                pass
+            sas.upload(file_path,remote_path)            
             sas.endsas()
     except Exception as e:
         # Return a JSON-serializable error; do not print
@@ -177,3 +179,4 @@ if __name__ == "__main__":
     # mcp.run(transport="streamable-http")
     mcp.run()
     
+
