@@ -11,7 +11,7 @@ This repository contains a minimal **Model Context Protocol (MCP)** server that 
 | `save_code(path, filename, content)` | Save SAS code remotely |
 
 ---
-## ⚙️ Features
+## Features
 
 - ✅ Clean MCP through SAS log and listing output
 - ✅ Returns `LOG` and `LST` from SASPy
@@ -20,7 +20,7 @@ This repository contains a minimal **Model Context Protocol (MCP)** server that 
 ## SASPy Configuration
 SASPy requires a configuration that specifies how it connects to SAS. To configure SASPy follow the instructions [here](https://sassoftware.github.io/saspy/configuration.html).
 
-## ⚙️ Use with Claude Desktop
+##  Use with Claude Desktop
 ### Click to see the demo
 [![##Watch the video](https://lh3.googleusercontent.com/d/1WAwX4zkm_tZLN-MwNthcq3kJ57g72uPb=w600-h600)](https://www.loom.com/share/60200b5123604569b64f68519ed527de?sid=de6b7b35-a3a0-4540-8773-668c5c00a002)
 
@@ -69,3 +69,26 @@ sequenceDiagram
     C->>C: Evaluate and generate additional SAS code if needed
     C-->>U: Display results (HTML tables/graphs)
 ```
+##  Use with GitHub Desktop
+Edit User mcp.json configuration
+
+```json
+{
+	"servers": {
+		"sastoolmcp": {
+			"type": "stdio",
+			"command": "uv",
+			"args": [
+				"run",
+				"--with",
+				"mcp[cli]",
+				"mcp",
+				"run",
+				"<absolute path to server.py>"				
+			]
+		}
+	},
+	"inputs": []
+}
+```
+
