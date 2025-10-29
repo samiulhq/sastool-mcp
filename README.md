@@ -1,4 +1,4 @@
-# sastool — A Tiny MCP Server for Running SAS Code via SASPy
+# sastool — MCP Server for Connecting to via SASPy
 
 This repository contains a minimal **Model Context Protocol (MCP)** server that exposes following SAS-powered tools to an MCP-compatible client (e.g., Claude Desktop, GitHub CoPilot):
 
