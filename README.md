@@ -69,7 +69,7 @@ sequenceDiagram
     C->>C: Evaluate and generate additional SAS code if needed
     C-->>U: Display results (HTML tables/graphs)
 ```
-##  Use with GitHub Desktop
+##  Use with GitHub Copilot
 Edit User mcp.json configuration
 
 ```json
